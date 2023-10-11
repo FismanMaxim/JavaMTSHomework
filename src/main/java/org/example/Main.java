@@ -30,7 +30,8 @@ public class Main {
     for (int i = 0; i < listSize; i++) {
       list.add(random.nextInt(minListValue,  maxListValue));
     }
-    System.out.println("List before sorting");
+
+    System.out.println("List before sorting: ");
     printList(list);
 
     List<Integer> javaBuiltinSortedList = sorter.sortList(list, SortingAlgorithmType.Bubble);
