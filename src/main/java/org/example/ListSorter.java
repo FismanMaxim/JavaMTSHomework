@@ -11,6 +11,10 @@ public class ListSorter {
   private final List<SortingAlgorithm> _sortingAlgorithms;
 
   public ListSorter(List<SortingAlgorithm> algorithms) {
+    if (algorithms == null) {
+      throw new IllegalArgumentException();
+    }
+
     _sortingAlgorithms = algorithms;
   }
 

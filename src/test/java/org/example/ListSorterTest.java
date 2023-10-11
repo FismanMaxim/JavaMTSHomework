@@ -16,6 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ListSorterTest {
   @Test
+  void Constructor_NullList() {
+    // Act & Assert
+    Assertions.assertThrows(IllegalArgumentException.class, () -> new ListSorter(null));
+  }
+
+  @Test
   void SortList_ValidList_ReturnSortedList() {
     // Assign
     ListSorter sorter = new ListSorter(List.of(
@@ -56,5 +62,17 @@ class ListSorterTest {
 
     // Act & Assert
     Assertions.assertThrows(ProperSortingAlgorithmNotFoundException.class, () -> sorter.sortList(list, SortingAlgorithmType.JavaBuiltin));
+  }
+
+  @Test
+  void SortList_NoProperAlgorithm_ThrowProperAlgorithmNotFoundException() {
+    // Assign
+    ListSorter sorter = new ListSorter(List.of(
+            new JavaBuiltinSorter(10)
+    ));
+    List<Integer> list = List.of(4, 6, 2, 4, 7, -6, 0, -2, -4);
+
+    // Act & Assign
+    Assertions.assertThrows(ProperSortingAlgorithmNotFoundException.class, () -> sorter.sortList(list, SortingAlgorithmType.Bubble));
   }
 }

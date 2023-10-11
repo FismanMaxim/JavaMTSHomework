@@ -13,6 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JavaBuiltinSorterTest {
   @Test
+  public void Constructor_InvalidListSize() {
+    // Act & Assert
+    Assertions.assertThrows(IllegalArgumentException.class, () -> new JavaBuiltinSorter(-10));
+  }
+
+  @Test
   void GetAlgorithmType_ReturnJavaBuiltin() {
     // Assign
     JavaBuiltinSorter sorter = new JavaBuiltinSorter(10);

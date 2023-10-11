@@ -8,6 +8,10 @@ public abstract class SortingAlgorithm {
   protected int maxListSize;
 
   public SortingAlgorithm(int maxListSize) {
+    if (maxListSize <= 0) {
+      throw new IllegalArgumentException();
+    }
+
     this.maxListSize = maxListSize;
   }
 

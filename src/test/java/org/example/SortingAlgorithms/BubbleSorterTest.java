@@ -13,6 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BubbleSorterTest {
   @Test
+  public void Constructor_InvalidListSize() {
+    // Act & Assert
+    Assertions.assertThrows(IllegalArgumentException.class, () -> new BubbleSorter(-10));
+  }
+
+  @Test
   void GetAlgorithmType_ReturnBubble() {
     // Assign
     BubbleSorter sorter = new BubbleSorter(10);
