@@ -22,6 +22,7 @@ public class ListSorter {
     ArrayList<Integer> listCopy = copyList(originalList);
 
     boolean properAlgorithmFound = false;
+    boolean sortedSuccessfully = false;
 
     for (SortingAlgorithm algorithm : _sortingAlgorithms) {
       if (algorithm.getAlgorithmType() != algorithmType)
@@ -31,6 +32,7 @@ public class ListSorter {
 
       try {
          algorithm.sort(listCopy);
+         sortedSuccessfully = true;
          break;
       } catch (TooLargeListSizeException e) {
         System.out.println("Cannot sort list with " + algorithm + " because it is too large for this algorithm. Trying the next one...");
@@ -39,6 +41,8 @@ public class ListSorter {
 
     if (properAlgorithmFound == false)
       throw new ProperSortingAlgorithmNotFoundException();
+    else if (sortedSuccessfully == false)
+      throw new TooLargeListSizeException();
     else
       return listCopy;
   }

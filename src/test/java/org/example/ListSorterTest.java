@@ -75,4 +75,18 @@ class ListSorterTest {
     // Act & Assign
     Assertions.assertThrows(ProperSortingAlgorithmNotFoundException.class, () -> sorter.sortList(list, SortingAlgorithmType.Bubble));
   }
+
+  @Test
+  void SortList_TooLargeList_ThrowTooLargeListException() {
+    // Assign
+    ListSorter sorter = new ListSorter(List.of(
+            new BubbleSorter(5),
+            new JavaBuiltinSorter(5)
+    ));
+    List<Integer> list = List.of(4, 6, 2, 4, 7, -6, 0, -2, -4);
+
+    // Act & Assign
+    Assertions.assertThrows(TooLargeListSizeException.class, () -> sorter.sortList(list, SortingAlgorithmType.Bubble));
+
+  }
 }
