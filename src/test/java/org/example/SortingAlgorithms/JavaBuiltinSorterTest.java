@@ -13,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JavaBuiltinSorterTest {
   @Test
-  public void Constructor_InvalidListSize() {
+  public void constructorInvalidListSize() {
     // Act & Assert
     Assertions.assertThrows(IllegalArgumentException.class, () -> new JavaBuiltinSorter(-10));
   }
 
   @Test
-  void GetAlgorithmType_ReturnJavaBuiltin() {
+  void returnJavaBuiltinAlgorithmType() {
     // Assign
     JavaBuiltinSorter sorter = new JavaBuiltinSorter(10);
     SortingAlgorithmType expected = SortingAlgorithmType.JavaBuiltin;
@@ -32,7 +32,7 @@ class JavaBuiltinSorterTest {
   }
 
   @Test
-  void SortList_ValidList_ReturnSortedList() {
+  void sortValidList() {
     // Assign
     JavaBuiltinSorter sorter = new JavaBuiltinSorter(10);
     ArrayList<Integer> actual = new ArrayList<>(List.of(-3, -5, 6, 8, -2, 5));
@@ -47,7 +47,7 @@ class JavaBuiltinSorterTest {
   }
 
   @Test
-  void SortList_NullList_ThrowNullArgumentException() {
+  void sortNullList() {
     // Assign
     JavaBuiltinSorter sorter = new JavaBuiltinSorter(10);
     ArrayList<Integer> actual = null;
@@ -57,7 +57,7 @@ class JavaBuiltinSorterTest {
   }
 
   @Test
-  void SortList_TooLargeList_ThrowTooLargeListExxception() {
+  void sortTooLargeList() {
     // Assign
     JavaBuiltinSorter sorter = new JavaBuiltinSorter(10);
     ArrayList<Integer> actual = new ArrayList<>(List.of(1, 3, 2, 4, 7, 3, 2, 5, 6, 8, 3, 2, 5, 6));

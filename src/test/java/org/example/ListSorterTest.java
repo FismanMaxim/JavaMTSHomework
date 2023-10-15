@@ -1,6 +1,5 @@
 package org.example;
 
-import com.sun.jdi.AbsentInformationException;
 import org.example.CustomExceptions.ProperSortingAlgorithmNotFoundException;
 import org.example.CustomExceptions.TooLargeListSizeException;
 import org.example.SortingAlgorithms.BubbleSorter;
@@ -12,17 +11,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ListSorterTest {
   @Test
-  void Constructor_NullList() {
+  void constructorNullList() {
     // Act & Assert
     Assertions.assertThrows(IllegalArgumentException.class, () -> new ListSorter(null));
   }
 
   @Test
-  void SortList_ValidList_ReturnSortedList() {
+  void sortValidList() {
     // Assign
     ListSorter sorter = new ListSorter(List.of(
             new BubbleSorter(5),
@@ -40,7 +37,7 @@ class ListSorterTest {
   }
 
   @Test
-  void SortList_NullList_ThrowNullArgumentException() {
+  void sortNullList() {
     // Assign
     ListSorter sorter = new ListSorter(List.of(
             new BubbleSorter(5),
@@ -53,7 +50,7 @@ class ListSorterTest {
   }
 
   @Test
-  void SortList_AbsentAlgorithm_ThrowAbsentProperAlgorithmException() {
+  void sortListWithAbsentAlgorithm() {
     // Assign
     ListSorter sorter = new ListSorter(List.of(
             new BubbleSorter(5)
@@ -65,7 +62,7 @@ class ListSorterTest {
   }
 
   @Test
-  void SortList_NoProperAlgorithm_ThrowProperAlgorithmNotFoundException() {
+  void noProperAlgorithmForSorting() {
     // Assign
     ListSorter sorter = new ListSorter(List.of(
             new JavaBuiltinSorter(10)
@@ -77,7 +74,7 @@ class ListSorterTest {
   }
 
   @Test
-  void SortList_TooLargeList_ThrowTooLargeListException() {
+  void sortTooLargeList() {
     // Assign
     ListSorter sorter = new ListSorter(List.of(
             new BubbleSorter(5),

@@ -13,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BubbleSorterTest {
   @Test
-  public void Constructor_InvalidListSize() {
+  public void constructorInvalidListSize() {
     // Act & Assert
     Assertions.assertThrows(IllegalArgumentException.class, () -> new BubbleSorter(-10));
   }
 
   @Test
-  void GetAlgorithmType_ReturnBubble() {
+  void returnBubbleAlgorithmType() {
     // Assign
     BubbleSorter sorter = new BubbleSorter(10);
     SortingAlgorithmType expected = SortingAlgorithmType.Bubble;
@@ -32,7 +32,7 @@ class BubbleSorterTest {
   }
 
   @Test
-  void SortList_ValidList_ReturnSortedList() {
+  void SortValidList() {
     // Assign
     BubbleSorter sorter = new BubbleSorter(10);
     ArrayList<Integer> actual = new ArrayList<>(List.of(-3, -5, 6, 8, -2, 5));
@@ -47,7 +47,7 @@ class BubbleSorterTest {
   }
 
   @Test
-  void SortList_NullList_ThrowNullArgumentException() {
+  void SortNullList() {
     // Assign
     BubbleSorter sorter = new BubbleSorter(10);
     ArrayList<Integer> actual = null;
@@ -57,7 +57,7 @@ class BubbleSorterTest {
   }
 
   @Test
-  void SortList_TooLargeList_ThrowTooLargeListException() {
+  void SortTooLargeList() {
     // Assign
     BubbleSorter sorter = new BubbleSorter(10);
     ArrayList<Integer> actual = new ArrayList<>(List.of(1, 3, 2, 4, 7, 3, 2, 5, 6, 8, 3, 2, 5, 6));
