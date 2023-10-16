@@ -8,14 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListSorter {
-  private final List<SortingAlgorithm> _sortingAlgorithms;
+  private final List<SortingAlgorithm> sortingAlgorithms;
 
   public ListSorter(List<SortingAlgorithm> algorithms) {
     if (algorithms == null) {
       throw new IllegalArgumentException();
     }
+    if (algorithms.isEmpty()) {
+      throw new IllegalArgumentException();
+    }
 
-    _sortingAlgorithms = algorithms;
+    sortingAlgorithms = algorithms;
   }
 
   public List<Integer> sortList(List<Integer> originalList, SortingAlgorithmType algorithmType) {
@@ -24,7 +27,7 @@ public class ListSorter {
     boolean properAlgorithmFound = false;
     boolean sortedSuccessfully = false;
 
-    for (SortingAlgorithm algorithm : _sortingAlgorithms) {
+    for (SortingAlgorithm algorithm : sortingAlgorithms) {
       if (algorithm.getAlgorithmType() != algorithmType)
         continue;
 
@@ -39,9 +42,9 @@ public class ListSorter {
       }
     }
 
-    if (properAlgorithmFound == false)
+    if (!properAlgorithmFound)
       throw new ProperSortingAlgorithmNotFoundException();
-    else if (sortedSuccessfully == false)
+    else if (!sortedSuccessfully)
       throw new TooLargeListSizeException();
     else
       return listCopy;

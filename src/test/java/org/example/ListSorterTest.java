@@ -19,6 +19,12 @@ class ListSorterTest {
   }
 
   @Test
+  void constructorEmptyList() {
+    // Act & Assert
+    Assertions.assertThrows(IllegalArgumentException.class, () -> new ListSorter(List.of()));
+  }
+
+  @Test
   void sortValidList() {
     // Assign
     ListSorter sorter = new ListSorter(List.of(
