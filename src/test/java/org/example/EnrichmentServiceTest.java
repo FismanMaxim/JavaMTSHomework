@@ -172,4 +172,55 @@ class EnrichmentServiceTest {
     Assertions.assertTrue(correct);
     // endregion
   }
+
+  @Test
+  void parallelEnrichmentOfSameMessage() {
+    // region Assign
+    HashMap<String, String> content = new HashMap<>();
+    content.put("testKey1", "testValue1");
+    content.put(MsisdnContentEnricher.MSISDN_KEY,  TEST_MSISDN);
+
+    Message message = new Message(content, Message.EnrichmentType.MSISDN);
+
+    EnrichmentService service =  new EnrichmentService(List.of(
+            new MsisdnContentEnricher()
+    ));
+
+    UsersDatabase.setMsisdnBase(new UsersMsisdnContainer(Map.of(
+            TEST_MSISDN, TEST_USER
+    )));
+
+    List<Map<String, String>> actualEnrichedMessagesContents = new CopyOnWriteArrayList<>();
+    ExecutorService executorService = Executors.newFixedThreadPool(10);
+    CountDownLatch latch = new CountDownLatch(10);
+
+    // Calculate expected values
+    var expectedContentAfterEnrichment = content;
+    expectedContentAfterEnrichment.put(MsisdnContentEnricher.FIRST_NAME_KEY, TEST_FIRST_NAME);
+    expectedContentAfterEnrichment.put(MsisdnContentEnricher.SECOND_NAME_KEY, TEST_SECOND_NAME);
+    // endregion
+
+    // region Act
+    for (int i = 0; i < 10; i++) {
+      executorService.submit(() -> {
+        var enrichedMessageContent = service.enrich(message);
+        actualEnrichedMessagesContents.add(enrichedMessageContent);
+        latch.countDown();
+      });
+    }
+
+    try {
+      latch.await();
+    } catch (InterruptedException e) {
+      System.out.println("Latch was interrupted");
+      Assertions.fail();
+    }
+    // endregion
+
+    // region Assert
+    for (var actualContent : actualEnrichedMessagesContents) {
+      assert MapsAsserter.compareEqual(expectedContentAfterEnrichment, actualContent);
+    }
+    // endregion
+  }
 }
