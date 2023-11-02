@@ -3,18 +3,20 @@ package org.example.UserStorage;
 import org.example.CustomExceptions.UserNotFoundException;
 import org.example.User;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class UsersMsisdnContainer implements UserRepository {
 
-  private final Map<String, User> map;
+  private final ConcurrentMap<String, User> map;
 
   public UsersMsisdnContainer() {
-    map = new HashMap<>();
+    map = new ConcurrentHashMap<>();
   }
   public UsersMsisdnContainer(Map<String, User> map) {
-    this.map = map;
+    this.map = new ConcurrentHashMap<>(map) {
+    };
   }
 
   public User findUserByMsisdn(String msisdn) {
