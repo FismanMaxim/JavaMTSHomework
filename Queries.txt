@@ -1,0 +1,74 @@
+1-й запрос:
+
+SELECT COUNT(*) 
+FROM profile
+WHERE profile_id NOT IN (SELECT profile_id FROM post);
+
+Результат:
+
+ count 
+-------
+     5
+(1 row)
+
+
+
+------------------------------
+
+
+
+2-й запрос:
+
+SELECT post_id 
+FROM post 
+WHERE 
+  (SELECT COUNT(*) FROM comment WHERE comment.post_id = post.post_id) = 2 AND
+  title ~ '^[0-9].*' AND
+  length(content) > 20 
+ORDER BY post_id;
+
+Результат:
+
+ post_id 
+---------
+      22
+      24
+      26
+      28
+      32
+      34
+      36
+      38
+      42
+      44
+(10 rows)
+
+
+
+------------------------------
+
+
+
+3-й запрос:
+
+SELECT post_id
+FROM post
+WHERE (SELECT COUNT(*) FROM comment WHERE comment.post_id = post.post_id) <= 1
+ORDER BY post_id
+LIMIT 10;
+
+Результат:
+
+ post_id 
+---------
+       1
+       3
+       5
+       7
+       9
+      11
+      13
+      15
+      17
+      19
+(10 rows)
