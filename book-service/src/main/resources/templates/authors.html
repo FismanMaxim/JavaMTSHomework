@@ -1,0 +1,27 @@
+<html lang="ru"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Список книг</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css-1.6.0.min.css"/>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Фамилия</th>
+        <th>Количество книг</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="author:${authors}">
+        <td th:text="${author.id}"></td>
+        <td th:text="${author.firstName}"></td>
+        <td th:text="${author.lastName}"></td>
+        <td th:text="${author.booksCopy.size()} books"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
