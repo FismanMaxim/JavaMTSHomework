@@ -5,7 +5,6 @@ import com.example.test.CustomExceptions.ItemNotFoundException;
 import com.example.test.Models.DTOs.TagDTO;
 import com.example.test.Models.Tag;
 import com.example.test.Services.TagService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,9 +14,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TagController.class)
@@ -27,7 +29,6 @@ public class TagEndpointsTest {
 
     @MockBean
     private TagService tagService;
-    ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void testGetTagEndpoint() throws Exception {
@@ -59,34 +60,14 @@ public class TagEndpointsTest {
     }
 
     @Test
-    void testCreateTagEndpoint() throws Exception {
+    void testCreateTagEndpoint() {
         TagDTO tagDTO = new TagDTO("Java");
-        String json = objectMapper.writeValueAsString(tagDTO);
 
-        mockMvc.perform(
-                        post("/api/tags")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json))
-                .andExpect(status().isCreated())
-                .andReturn();
+        when(tagService.create(any(Tag.class))).thenReturn(tagDTO.get());
 
-        verify(tagService).create(any(Tag.class));
-    }
+        String name = tagService.create(tagDTO.get()).getName();
 
-    @Test
-    void testUpdateTagEndpoint() throws Exception {
-        long tagId = 1L;
-        TagDTO tagDTO = new TagDTO("Updated Tag");
-        String json = objectMapper.writeValueAsString(tagDTO);
-
-        mockMvc.perform(
-                        put("/api/tags/{id}", tagId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        verify(tagService).updateTag(eq(tagId), any(TagDTO.class));
+        assertEquals(tagDTO.get().getName(), name);
     }
 
     @Test

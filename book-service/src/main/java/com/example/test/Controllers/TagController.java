@@ -26,15 +26,14 @@ public class TagController {
         return tagOpt.map(tag -> new ResponseEntity<>(tag, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public Tag createTag(@Valid @RequestBody TagDTO tagDTO) {
         return tagService.create(tagDTO.get());
     }
 
     @PutMapping("{id}")
-    public void updateTag(@PathVariable long id,
-                             @Valid @RequestBody TagDTO tagDTO) {
+    public void updateTag(@PathVariable long id, @Valid @RequestBody TagDTO tagDTO) {
         tagService.updateTag(id, tagDTO);
     }
 
