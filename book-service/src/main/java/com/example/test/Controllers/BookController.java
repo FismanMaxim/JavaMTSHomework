@@ -27,14 +27,13 @@ public class BookController {
 
     @GetMapping()
     public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+        return bookService.getAll();
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Book> getBook(@PathVariable("id") long id) {
-        var bookOpt = bookService.getBook(id);
-        if (bookOpt.isPresent()) return new ResponseEntity<>(bookOpt.get(), HttpStatus.OK);
-        else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        var bookOpt = bookService.findById(id);
+        return bookOpt.map(book -> new ResponseEntity<>(book, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -45,7 +44,7 @@ public class BookController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public Book createBook(@Valid @RequestBody BookDTO bookDTO) {
-        return bookService.createBook(bookDTO.getBook());
+        return bookService.create(bookDTO.get());
     }
 
     @PutMapping("{id}/title")
@@ -56,7 +55,7 @@ public class BookController {
     @DeleteMapping("{id}")
     public void deleteBook(@PathVariable long id) {
         try {
-            bookService.deleteBook(id);
+            bookService.delete(id);
         } catch (ItemNotFoundException e) {
             throw new RestClientException("Cannot delete book because it does not exist");
         }

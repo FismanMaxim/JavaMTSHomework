@@ -14,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,7 +70,7 @@ public class TagEndpointsTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        verify(tagService).createTag(any(Tag.class));
+        verify(tagService).create(any(Tag.class));
     }
 
     @Test
@@ -95,19 +97,19 @@ public class TagEndpointsTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        verify(tagService).deleteTagById(tagId);
+        verify(tagService).delete(tagId);
     }
 
     @Test
     void testDeleteTagEndpointNotFound() throws Exception {
         long nonExistingTagId = 99L;
 
-        doThrow(new ItemNotFoundException("Tag not found")).when(tagService).deleteTagById(nonExistingTagId);
+        doThrow(new ItemNotFoundException("Tag not found")).when(tagService).delete(nonExistingTagId);
 
         mockMvc.perform(delete("/api/tags/{id}", nonExistingTagId))
                 .andExpect(status().isNotFound()) // Assuming you want to return 400 for failure
                 .andReturn();
 
-        verify(tagService).deleteTagById(nonExistingTagId);
+        verify(tagService).delete(nonExistingTagId);
     }
 }

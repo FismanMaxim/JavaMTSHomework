@@ -3,7 +3,6 @@ package com.example.test.Services;
 import com.example.test.CustomExceptions.ItemNotFoundException;
 import com.example.test.Models.Author;
 import com.example.test.Models.Book;
-import com.example.test.Models.DTOs.BookDTO;
 import com.example.test.Models.Tag;
 import com.example.test.Repositories.AuthorRepository;
 import com.example.test.Repositories.BookRepository;
@@ -11,12 +10,11 @@ import com.example.test.Repositories.TagRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class BookService {
+public class BookService implements CrudService<Book, Long> {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final TagRepository tagRepository;
@@ -27,23 +25,26 @@ public class BookService {
         this.tagRepository = tagRepository;
     }
 
-    public List<Book> getAllBooks() {
+    @Override
+    public List<Book> getAll() {
         return bookRepository.findAll();
     }
 
-    public Optional<Book> getBook(long bookId) {
+    @Override
+    public Optional<Book> findById(Long bookId) {
         return bookRepository.findById(bookId);
+    }
+
+    @Transactional
+    @Override
+    public Book create(Book book) {
+        return bookRepository.save(book);
     }
 
     public List<Book> findBooksByTag(Long tagId) {
         Tag tag = tagRepository.findById(tagId).orElseThrow(
                 () -> new ItemNotFoundException("Tag with given id not found: id=" + tagId));
         return bookRepository.findBookByTagsContains(tag);
-    }
-
-    @Transactional
-    public Book createBook(Book book) {
-        return bookRepository.save(book);
     }
 
     @Transactional
@@ -55,7 +56,8 @@ public class BookService {
     }
 
     @Transactional
-    public void deleteBook(long bookIndex) {
+    @Override
+    public void delete(Long bookIndex) {
         bookRepository.deleteById(bookIndex);
     }
 

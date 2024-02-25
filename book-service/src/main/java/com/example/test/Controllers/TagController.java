@@ -2,8 +2,8 @@ package com.example.test.Controllers;
 
 import com.example.test.CustomExceptions.ApiError;
 import com.example.test.CustomExceptions.ItemNotFoundException;
-import com.example.test.Models.Tag;
 import com.example.test.Models.DTOs.TagDTO;
+import com.example.test.Models.Tag;
 import com.example.test.Services.TagService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,14 +23,13 @@ public class TagController {
     @GetMapping("{id}")
     public ResponseEntity<Tag> getTag(@PathVariable long id) {
         var tagOpt = tagService.findById(id);
-        if (tagOpt.isPresent()) return new ResponseEntity<>(tagOpt.get(), HttpStatus.OK);
-        else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return tagOpt.map(tag -> new ResponseEntity<>(tag, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Tag createTag(@Valid @RequestBody TagDTO tagDTO) {
-        return tagService.createTag(tagDTO.getTag());
+        return tagService.create(tagDTO.get());
     }
 
     @PutMapping("{id}")
@@ -42,7 +41,7 @@ public class TagController {
     @DeleteMapping("{id}")
     public void deleteBook(@PathVariable long id) {
         try {
-            tagService.deleteTagById(id);
+            tagService.delete(id);
         } catch (ItemNotFoundException e) {
             throw new RestClientException("Cannot delete tag by id because it does not exist: id=" + id);
         }

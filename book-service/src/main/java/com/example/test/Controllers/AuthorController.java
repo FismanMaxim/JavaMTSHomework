@@ -23,14 +23,13 @@ public class AuthorController {
     @GetMapping("{id}")
     public ResponseEntity<Author> getAuthor(@PathVariable long id) {
         var authorOpt = authorService.findById(id);
-        if (authorOpt.isPresent()) return new ResponseEntity<>(authorOpt.get(), HttpStatus.OK);
-        else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return authorOpt.map(author -> new ResponseEntity<>(author, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Author createAuthor(@Valid @RequestBody CreateAuthorRequest createAuthorRequest) {
-        return authorService.createAuthor(createAuthorRequest.getAuthor());
+        return authorService.create(createAuthorRequest.get());
     }
 
     @PutMapping("{id}")
@@ -42,7 +41,7 @@ public class AuthorController {
     @DeleteMapping("{id}")
     public void deleteBook(@PathVariable long id) {
         try {
-            authorService.deleteAuthorById(id);
+            authorService.delete(id);
         } catch (ItemNotFoundException e) {
             throw new RestClientException("Cannot delete author by id because it does not exist: id=" + id);
         }

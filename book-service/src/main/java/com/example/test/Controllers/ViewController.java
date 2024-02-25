@@ -28,21 +28,21 @@ public class ViewController {
 
     @GetMapping("/books")
     public String viewBooks(Model model) {
-        List<Book> books = bookService.getAllBooks();
+        List<Book> books = bookService.getAll();
         model.addAttribute("books", books);
         return "books";
     }
 
     @GetMapping("/authors")
     public String viewAuthors(Model model) {
-        List<Author> authors = authorService.getAllAuthors();
+        List<Author> authors = authorService.getAll();
         model.addAttribute("authors", authors);
         return "authors";
     }
 
     @GetMapping("/tags")
     public String viewTags(Model model) {
-        List<Tag> tags = tagService.getAllTags();
+        List<Tag> tags = tagService.getAll();
         model.addAttribute("tags", tags);
         return "tags";
     }

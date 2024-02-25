@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +51,7 @@ public class BookServiceIntegrationTest {
         Book book = new Book(author, "title", Set.of(tag1));
 
         // create book
-        Book savedBook = bookService.createBook(book);
+        Book savedBook = bookService.create(book);
         assertEquals(book.getTitle(), savedBook.getTitle());
         long bookId = savedBook.getId();
         long authorId = savedBook.getAuthor().getId();
@@ -69,17 +67,17 @@ public class BookServiceIntegrationTest {
 
         // change book author
         Author newAuthor = new Author("newName", "newSurname");
-        long newAuthorId = authorService.createAuthor(newAuthor).getId();
+        long newAuthorId = authorService.create(newAuthor).getId();
         bookService.changeBookAuthor(bookId, newAuthorId);
 
         // Check new author
-        Optional<Book> retrievedBookOpt = bookService.getBook(bookId);
+        Optional<Book> retrievedBookOpt = bookService.findById(bookId);
         if (retrievedBookOpt.isEmpty()) fail();
         else assertEquals(newAuthorId, retrievedBookOpt.get().getAuthor().getId());
 
         // delete book
-        bookService.deleteBook(bookId);
-        retrievedBookOpt = bookService.getBook(bookId);
+        bookService.delete(bookId);
+        retrievedBookOpt = bookService.findById(bookId);
         assertTrue(retrievedBookOpt.isEmpty());
     }
 }

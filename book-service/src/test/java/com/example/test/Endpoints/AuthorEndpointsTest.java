@@ -63,7 +63,7 @@ public class AuthorEndpointsTest {
         CreateAuthorRequest createAuthorRequest = new CreateAuthorRequest("John", "Doe");
         String json = objectMapper.writeValueAsString(createAuthorRequest);
 
-        when(authorService.createAuthor(any(Author.class))).thenReturn(createAuthorRequest.getAuthor());
+        when(authorService.create(any(Author.class))).thenReturn(createAuthorRequest.get());
 
         mockMvc.perform(
                         post("/api/authors")
@@ -72,7 +72,7 @@ public class AuthorEndpointsTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        verify(authorService).createAuthor(any(Author.class));
+        verify(authorService).create(any(Author.class));
     }
 
     @Test
@@ -97,25 +97,25 @@ public class AuthorEndpointsTest {
     void testDeleteAuthorEndpoint() throws Exception {
         long authorId = 1L;
 
-        doNothing().when(authorService).deleteAuthorById(authorId);
+        doNothing().when(authorService).delete(authorId);
 
         mockMvc.perform(delete("/api/authors/{id}", authorId))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        verify(authorService).deleteAuthorById(authorId);
+        verify(authorService).delete(authorId);
     }
 
     @Test
     void testDeleteAuthorEndpointNotFound() throws Exception {
         long nonExistingAuthorId = 99L;
 
-        doThrow(new ItemNotFoundException("Author not found")).when(authorService).deleteAuthorById(nonExistingAuthorId);
+        doThrow(new ItemNotFoundException("Author not found")).when(authorService).delete(nonExistingAuthorId);
 
         mockMvc.perform(delete("/api/authors/{id}", nonExistingAuthorId))
                 .andExpect(status().isNotFound())
                 .andReturn();
 
-        verify(authorService).deleteAuthorById(nonExistingAuthorId);
+        verify(authorService).delete(nonExistingAuthorId);
     }
 }

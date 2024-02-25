@@ -1,23 +1,15 @@
 package com.example.test;
 
-import com.example.test.Controllers.BookController;
 import com.example.test.Models.Author;
 import com.example.test.Models.Book;
 import com.example.test.Models.DTOs.BookDTO;
 import com.example.test.Models.DTOs.CreateAuthorRequest;
-import com.example.test.Models.DTOs.TagDTO;
 import com.example.test.Models.Tag;
-import com.example.test.Services.AuthorService;
-import com.example.test.Services.BookService;
-import com.sun.source.tree.LambdaExpressionTree;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -27,15 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 
-import javax.xml.stream.events.EntityReference;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
