@@ -3,36 +3,35 @@ package com.example.test.Models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
+    @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Setter
-    @Getter
     @NotNull(message = "Author name cannot be empty")
     private String firstName;
 
-    @Setter
-    @Getter
     @NotNull(message = "Author name cannot be empty")
     private String lastName;
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private List<Book> books;
-
-    protected Author () {
-
-    }
 
     public Author(String firstName, String lastName) {
         this.firstName = firstName;

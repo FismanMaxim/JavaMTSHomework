@@ -2,7 +2,10 @@ package com.example.test.Models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.Set;
@@ -10,9 +13,11 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @NotNull(message = "Author cannot be null")
@@ -32,9 +37,6 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags;
-
-    protected Book() {
-    }
 
     public Book(Author author, String title, Set<Tag> tags) {
         this.author = author;
