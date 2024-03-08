@@ -1,11 +1,11 @@
 package com.mipt.hsse.tech.rentservice;
 
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RentServiceApplicationTests {
-
-//    @Test
-//    void contextLoads() {
-//    }
+public class RentServiceApplicationTests {
+    @Test
+    public void contextLoads() {
+    }
 }
