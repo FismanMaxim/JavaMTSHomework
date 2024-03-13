@@ -39,7 +39,7 @@ public class BookController {
     return bookService.getAll();
   }
 
-  @GetMapping("{id}")
+  @GetMapping("/{id}")
   public ResponseEntity<Book> getBook(@PathVariable("id") long id) {
     var bookOpt = bookService.findById(id);
     return bookOpt
@@ -78,7 +78,7 @@ public class BookController {
 
       return bookService.create(bookDTO.get());
     } catch (RestClientException e) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException(e);
     }
   }
 
@@ -90,12 +90,12 @@ public class BookController {
     throw new RestClientException(requestNotPermitted.getMessage(), requestNotPermitted);
   }
 
-  @PutMapping("{id}/title")
+  @PutMapping("/{id}/title")
   public void updateBookTitle(@PathVariable long id, @NotNull String newTitle) {
     bookService.updateBookTitle(id, newTitle);
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping("/{id}")
   public void deleteBook(@PathVariable long id) {
     Optional<Book> bookOpt = bookService.findById(id);
     if (bookOpt.isEmpty())
@@ -126,12 +126,12 @@ public class BookController {
     }
   }
 
-  @GetMapping("tagged/{tagId}")
+  @GetMapping("/tagged/{tagId}")
   public List<Book> findBooksWithTag(@PathVariable Long tagId) {
     return bookService.findBooksByTag(tagId);
   }
 
-  @PutMapping("{bookId}/changeAuthor/{newAuthorId}")
+  @PutMapping("/{bookId}/changeAuthor/{newAuthorId}")
   public void changeAuthor(@PathVariable long bookId, @PathVariable long newAuthorId) {
     try {
       bookService.changeBookAuthor(bookId, newAuthorId);

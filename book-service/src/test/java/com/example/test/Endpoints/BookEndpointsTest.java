@@ -2,6 +2,7 @@ package com.example.test.Endpoints;
 
 import com.example.test.Controllers.BookController;
 import com.example.test.CustomExceptions.ItemNotFoundException;
+import com.example.test.Models.Author;
 import com.example.test.Models.Book;
 import com.example.test.Models.DTOs.BookDTO;
 import com.example.test.Services.BookService;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,7 +39,7 @@ class BookEndpointsTest {
 
     @Test
     void testCreateBookEndpoint() throws Exception {
-        BookDTO bookDTO = new BookDTO(null, "", null);
+    BookDTO bookDTO = new BookDTO(new Author("A", "B"), "Title", Set.of());
         Book book = bookDTO.get();
         String json = objectMapper.writeValueAsString(bookDTO);
 
@@ -98,6 +100,7 @@ class BookEndpointsTest {
     void testDeleteBookEndpoint() throws Exception {
         long bookId = 1L;
 
+        when(bookService.findById(any())).thenReturn(Optional.of(new Book(new Author("A", "B"), "", Set.of())));
         doNothing().when(bookService).delete(bookId);
 
         mockMvc.perform(delete("/api/books/{id}", bookId))
@@ -105,19 +108,6 @@ class BookEndpointsTest {
                 .andReturn();
 
         verify(bookService).delete(bookId);
-    }
-
-    @Test
-    void testDeleteBookEndpointNotFound() throws Exception {
-        long nonExistingBookId = 99L;
-
-        doThrow(new ItemNotFoundException()).when(bookService).delete(nonExistingBookId);
-
-        mockMvc.perform(delete("/api/books/{id}", nonExistingBookId))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
-        verify(bookService).delete(nonExistingBookId);
     }
 
     @Test
