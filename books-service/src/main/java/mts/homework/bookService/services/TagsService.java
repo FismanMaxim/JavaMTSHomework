@@ -43,7 +43,6 @@ public class TagsService {
     return jpaTagsRepository.save(new Tag(tagName));
   }
 
-  @Transactional
   public Optional<Tag> findTag(Long id) {
     return jpaTagsRepository.findById(id);
   }
