@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthorsRegistryController {
   private final Set<Pair<String, String>> authorsBooks =
       Set.of(
-          new Pair<>("Уилльям Шекспир", "Ромео и Джульетта"),
+          new Pair<>("Уильям Шекспир", "Ромео и Джульетта"),
           new Pair<>("Лев Толстой", "Война и мир"));
 
   private final HashSet<String> requests = new HashSet<>();

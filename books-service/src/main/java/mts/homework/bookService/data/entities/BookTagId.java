@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
 @Embeddable
 @Getter
@@ -22,7 +21,6 @@ public class BookTagId implements Serializable {
   @NotNull
   @Column(name = "tag_id", nullable = false)
   private Long tagId;
-
 
   @Override
   public boolean equals(Object o) {

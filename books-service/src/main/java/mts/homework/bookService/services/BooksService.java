@@ -29,19 +29,15 @@ public class BooksService {
     this.authorsGateway = authorsGateway;
   }
 
-  @Transactional
   public Book createNew(BookCreationInfo creationInfo) throws InvalidBookDataException {
     if (creationInfo.authorId() == null || creationInfo.title() == null) {
       throw new InvalidBookDataException();
     }
 
-    var targetAuthorOpt = jpaAuthorsRepository.findById(creationInfo.authorId());
-
-    if (targetAuthorOpt.isEmpty()) {
-      throw new InvalidBookDataException();
-    }
-
-    var targetAuthor = targetAuthorOpt.get();
+    var targetAuthor =
+        jpaAuthorsRepository
+            .findById(creationInfo.authorId())
+            .orElseThrow(InvalidBookDataException::new);
 
     if (!authorsGateway.isAuthorWroteThisBook(
         targetAuthor.getFirstName(), targetAuthor.getLastName(), creationInfo.title())) {
@@ -51,7 +47,6 @@ public class BooksService {
     return booksRepository.createBook(targetAuthor, creationInfo.title());
   }
 
-  @Transactional
   public boolean deleteBook(long id) {
     try {
       var book = booksRepository.findBook(id);
@@ -76,7 +71,6 @@ public class BooksService {
     return targetAuthorOpt.flatMap(author -> updateBook(id, book -> book.setAuthor(author)));
   }
 
-  @Transactional
   public Optional<Book> findBook(long id) {
     try {
       return Optional.of(booksRepository.findBook(id));
@@ -116,7 +110,6 @@ public class BooksService {
     return target;
   }
 
-  @Transactional
   public List<Book> getBooksByTag(long tagId) {
     return booksRepository.getByTag(tagId);
   }

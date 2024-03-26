@@ -4,7 +4,6 @@ import java.util.Optional;
 import mts.homework.bookService.data.entities.Author;
 import mts.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthorsService {
@@ -15,12 +14,10 @@ public class AuthorsService {
     this.authorsRepository = authorsRepository;
   }
 
-  @Transactional
   public Optional<Author> findAuthor(long id) {
     return authorsRepository.findById(id);
   }
 
-  @Transactional
   public Optional<Author> updateAuthor(Long id, AuthorUpdateDto update) {
     var targetAuthorOpt = authorsRepository.findById(id);
     if (targetAuthorOpt.isEmpty()) return targetAuthorOpt;
@@ -37,14 +34,12 @@ public class AuthorsService {
     return targetAuthorOpt;
   }
 
-  @Transactional
   public Author createNew(String firstName, String lastName) {
     var author = new Author(firstName, lastName);
 
     return authorsRepository.save(author);
   }
 
-  @Transactional
   public boolean deleteAuthor(Long id) {
     var target = authorsRepository.findById(id);
 

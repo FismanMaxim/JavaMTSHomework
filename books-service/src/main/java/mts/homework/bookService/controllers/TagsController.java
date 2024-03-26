@@ -20,25 +20,29 @@ public class TagsController {
     this.tagsService = tagsService;
   }
 
-
   @PostMapping
-  public ResponseEntity<TagApiEntity> createTag(@RequestBody TagCreationRequest creationData) throws TagAlreadyExistsException {
+  public ResponseEntity<TagApiEntity> createTag(@RequestBody TagCreationRequest creationData)
+      throws TagAlreadyExistsException {
     return ResponseEntity.ok(TagApiEntity.fromTag(tagsService.createNew(creationData.name())));
   }
 
   @PatchMapping("{id}")
-  public ResponseEntity<TagApiEntity> renameTag(@PathVariable long id, @RequestBody TagUpdateRequest updateData) throws TagAlreadyExistsException {
+  public ResponseEntity<TagApiEntity> renameTag(
+      @PathVariable long id, @RequestBody TagUpdateRequest updateData)
+      throws TagAlreadyExistsException {
     var target = tagsService.rename(id, updateData.newName());
 
-    return target.map(tag -> ResponseEntity.ok(TagApiEntity.fromTag(tag)))
-            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    return target
+        .map(tag -> ResponseEntity.ok(TagApiEntity.fromTag(tag)))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
   }
 
   @GetMapping("{id}")
   public ResponseEntity<TagApiEntity> findTag(@PathVariable("id") long id) {
     var target = tagsService.findTag(id);
 
-    return target.map(tag -> ResponseEntity.ok(TagApiEntity.fromTag(tag)))
+    return target
+        .map(tag -> ResponseEntity.ok(TagApiEntity.fromTag(tag)))
         .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
   }
 
@@ -51,5 +55,4 @@ public class TagsController {
   public void deleteTag(@PathVariable("id") long id) {
     tagsService.deleteTag(id);
   }
-
 }

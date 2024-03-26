@@ -5,7 +5,6 @@ import mts.homework.bookService.data.entities.Tag;
 import mts.homework.bookService.data.repositories.jpa.JpaTagsRepository;
 import mts.homework.bookService.exceptions.TagAlreadyExistsException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TagsService {
@@ -16,7 +15,6 @@ public class TagsService {
     this.jpaTagsRepository = jpaTagsRepository;
   }
 
-  @Transactional
   public Optional<Tag> rename(long id, String newName) throws TagAlreadyExistsException {
     var tagWithSameNameOpt = jpaTagsRepository.findByName(newName);
 
@@ -34,7 +32,6 @@ public class TagsService {
     return target;
   }
 
-  @Transactional
   public Tag createNew(String tagName) throws TagAlreadyExistsException {
     if (jpaTagsRepository.findByName(tagName).isPresent()) {
       throw new TagAlreadyExistsException();
@@ -47,7 +44,6 @@ public class TagsService {
     return jpaTagsRepository.findById(id);
   }
 
-  @Transactional
   public boolean deleteTag(long id) {
     jpaTagsRepository.deleteById(id);
 
