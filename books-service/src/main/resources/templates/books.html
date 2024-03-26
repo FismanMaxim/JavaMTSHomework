@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список книг</title>
+    <link href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css-1.6.0.min.css" rel="stylesheet"/>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Автор</th>
+        <th>Название</th>
+        <th>Теги</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book:${books}">
+        <td th:text="${book.id() + 1}"></td>
+        <td th:text="${book.author()}"></td>
+        <td th:text="${book.title()}"></td>
+        <td>
+            <ul>
+                <li th:each="tag:${book.tags()}" th:text="${tag}"></li>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
