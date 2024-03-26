@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS books
 (
     id        BIGSERIAL PRIMARY KEY,
     author_id BIGINT REFERENCES authors (id) NOT NULL,
-    title     TEXT                           NOT NULL
+    title     TEXT                           NOT NULL,
+    rating    INT
 );
 
 CREATE TABLE IF NOT EXISTS tags

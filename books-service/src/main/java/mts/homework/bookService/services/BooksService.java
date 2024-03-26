@@ -1,32 +1,53 @@
 package mts.homework.bookService.services;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mts.homework.bookService.data.entities.Book;
-import mts.homework.bookService.data.repositories.BooksRepositoryBase;
 import mts.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import mts.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
+import mts.homework.bookService.data.repositories.jpa.JpaBooksRepository;
 import mts.homework.bookService.data.repositories.jpa.JpaTagsRepository;
 import mts.homework.bookService.exceptions.InvalidBookDataException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 public class BooksService {
-  private final BooksRepositoryBase booksRepository;
+//  private final BooksRepositoryBase booksRepository;
+  private final JpaBooksRepository booksRepository;
   private final JpaAuthorsRepository jpaAuthorsRepository;
   private final JpaTagsRepository jpaTagsRepository;
   private final AuthorsRegistryServiceGatewayBase authorsGateway;
 
+  private final String topic;
+  private final ObjectMapper mapper;
+  private final KafkaTemplate<String, String> kafkaTemplate;
+
   public BooksService(
-      BooksRepositoryBase booksRepository,
+      JpaBooksRepository booksRepository,
       JpaAuthorsRepository jpaAuthorsRepository,
       JpaTagsRepository jpaTagsRepository,
-      AuthorsRegistryServiceGatewayBase authorsGateway) {
+      AuthorsRegistryServiceGatewayBase authorsGateway, @Value("${topic-to-send-get-rating-request}") String topic, ObjectMapper mapper, KafkaTemplate<String, String> kafkaTemplate) {
     this.booksRepository = booksRepository;
     this.jpaAuthorsRepository = jpaAuthorsRepository;
     this.jpaTagsRepository = jpaTagsRepository;
     this.authorsGateway = authorsGateway;
+    this.topic = topic;
+    this.mapper = mapper;
+    this.kafkaTemplate = kafkaTemplate;
   }
 
   public Book createNew(BookCreationInfo creationInfo) throws InvalidBookDataException {
@@ -44,23 +65,52 @@ public class BooksService {
       throw new InvalidBookDataException();
     }
 
-    return booksRepository.createBook(targetAuthor, creationInfo.title());
+    Book book = new Book(creationInfo.title(), targetAuthor);
+
+    return booksRepository.save(book);
   }
 
   public boolean deleteBook(long id) {
-    try {
-      var book = booksRepository.findBook(id);
-      var author = book.getAuthor();
+    var book = booksRepository.findById(id).orElseThrow();
+    var author = book.getAuthor();
 
-      if (!authorsGateway.isAuthorWroteThisBook(
-          author.getFirstName(), author.getLastName(), book.getTitle())) {
-        return false;
-      }
-
-      booksRepository.deleteBook(id);
-      return true;
-    } catch (BookNotFoundException e) {
+    if (!authorsGateway.isAuthorWroteThisBook(
+        author.getFirstName(), author.getLastName(), book.getTitle())) {
       return false;
+    }
+
+    booksRepository.deleteById(id);
+    return true;
+  }
+
+  record CalculateRatingRequest(long bookId) {}
+  record CalculateRatingResponse(long bookId, long rating) {}
+
+  public void calculateRating(long bookId) throws JsonProcessingException {
+    String message = mapper.writeValueAsString(new CalculateRatingRequest(bookId));
+    CompletableFuture<SendResult<String, String>> sendResult = kafkaTemplate.send(topic, message);
+    try {
+      sendResult.get(2, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException("Unexpected thread interruption", e);
+    } catch (ExecutionException e) {
+      throw new RuntimeException("Couldn't send message to Kafka", e);
+    } catch (TimeoutException e) {
+      throw new RuntimeException("Couldn't send message to Kafka due to timeout", e);
+    }
+  }
+
+  @KafkaListener(topics = {"${topic-to-get-get-rating-response}"})
+  @Transactional
+  public void onRatingReceived(String message) throws JsonProcessingException {
+    var result = mapper.readValue(message, CalculateRatingResponse.class);
+    try {
+      Book book = booksRepository.findById(result.bookId).orElseThrow(BookNotFoundException::new);
+      book.setRating(result.rating);
+      booksRepository.save(book);
+    } catch (BookNotFoundException e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -72,11 +122,7 @@ public class BooksService {
   }
 
   public Optional<Book> findBook(long id) {
-    try {
-      return Optional.of(booksRepository.findBook(id));
-    } catch (BookNotFoundException e) {
-      return Optional.empty();
-    }
+    return booksRepository.findById(id);
   }
 
   @Transactional
@@ -111,10 +157,10 @@ public class BooksService {
   }
 
   public List<Book> getBooksByTag(long tagId) {
-    return booksRepository.getByTag(tagId);
+    return booksRepository.findBooksByTag(tagId);
   }
 
   public List<Book> getAllBooks() {
-    return booksRepository.getAllBooks();
+    return booksRepository.findAll();
   }
 }

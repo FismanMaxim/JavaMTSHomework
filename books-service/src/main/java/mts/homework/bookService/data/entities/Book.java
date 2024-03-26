@@ -41,6 +41,9 @@ public class Book {
   @Column(name = "title", nullable = false, length = Integer.MAX_VALUE)
   private String title;
 
+  @NotNull
+  private long rating;
+
   public Book(String title, Author author) {
     this.title = title;
     this.author = author;
