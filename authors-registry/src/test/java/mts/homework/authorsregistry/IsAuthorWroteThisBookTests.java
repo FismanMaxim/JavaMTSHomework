@@ -19,7 +19,7 @@ public class IsAuthorWroteThisBookTests {
         http.getForEntity(
             "/api/authors-registry/is-wrote-this-book?firstName={firstName}&lastName={lastName}&bookName={bookName}",
             isAuthorOfBook.class,
-            Map.of("firstName", "Уилльям", "lastName", "Шекспир", "bookName", "Ромео и Джульетта"));
+            Map.of("firstName", "Уильям", "lastName", "Шекспир", "bookName", "Ромео и Джульетта"));
 
     assertTrue(result.getStatusCode().is2xxSuccessful());
     assertTrue(result.hasBody());
@@ -35,7 +35,7 @@ public class IsAuthorWroteThisBookTests {
             isAuthorOfBook.class,
             Map.of(
                 "firstName",
-                "Уилльям",
+                "Уильям",
                 "lastName",
                 "Шекспир",
                 "bookName",
